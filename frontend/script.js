@@ -1,38 +1,49 @@
-function openModal() {
-  document.getElementById("modal").style.display = "flex";
-}
-
-function closeModal() {
-  document.getElementById("modal").style.display = "none";
-}
-
-async function generateAI() {
-  const title = document.getElementById("title").value;
+async function generate() {
   const content = document.getElementById("content").value;
-  const type = document.getElementById("type").value;
   const difficulty = document.getElementById("difficulty").value;
   const count = document.getElementById("count").value;
+  const resultBox = document.getElementById("result");
 
-  if (!content) {
-    alert("Vui lòng nhập nội dung bài học");
+  if (!content.trim()) {
+    resultBox.innerText = "⚠️ Vui lòng nhập nội dung bài học";
     return;
   }
 
-  document.getElementById("result").innerText = "⏳ AI đang tạo câu hỏi...";
+  resultBox.innerText = "🤖 AI đang tạo câu hỏi, vui lòng chờ...";
 
-  const res = await fetch("https://taobaitap.onrender.com/generate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      title,
-      content,
-      type,
-      difficulty,
-      count
-    })
-  });
+  try {
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), 60000); // timeout 60s
 
-  const data = await res.json();
-  document.getElementById("result").innerText = data.result;
+    const res = await fetch("https://taobaitap.onrender.com/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title: "Bài học",
+        content: content,
+        type: "trắc nghiệm",
+        difficulty: difficulty,
+        count: Number(count)
+      }),
+      signal: controller.signal
+    });
+
+    if (!res.ok) {
+      throw new Error("Server lỗi");
+    }
+
+    const data = await res.json();
+
+    if (data.result) {
+      resultBox.innerText = data.result;
+    } else {
+      resultBox.innerText = "❌ Không nhận được dữ liệu từ AI";
+    }
+
+  } catch (err) {
+    resultBox.innerText = "❌ Lỗi tạo câu hỏi hoặc server quá chậm";
+    console.error(err);
+  }
 }
-
