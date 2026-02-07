@@ -36,7 +36,7 @@ async function generate() {
     const controller = new AbortController();
     setTimeout(() => controller.abort(), 60000); // timeout 60s
 
-    const res = await fetch("https://taobaitap.onrender.com/generate-quiz", {
+    const res = await fetch("https://taobaitap.onrender.com/generate", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
@@ -69,4 +69,5 @@ async function generate() {
     console.error(err);
   }
 }
+
 
