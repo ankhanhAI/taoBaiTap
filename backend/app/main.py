@@ -32,8 +32,12 @@ Tạo {data.count} câu hỏi trắc nghiệm 1 đáp án đúng từ nội dung
 
 \"\"\"{data.content}\"\"\"  
 
-CHỈ TRẢ VỀ JSON, KHÔNG GIẢI THÍCH:
+YÊU CẦU:
+- Mỗi câu có 4 đáp án A B C D
+- Chỉ 1 đáp án đúng
+- Trả về JSON THUẦN (không markdown, không giải thích)
 
+FORMAT:
 {{
   "title": "{data.title}",
   "questions": [
@@ -49,8 +53,8 @@ CHỈ TRẢ VỀ JSON, KHÔNG GIẢI THÍCH:
     response = model.generate_content(prompt)
     text = response.text.strip()
 
-    # dọn ```json nếu có
-    if "```" in text:
+    # Dọn ```json nếu có
+    if text.startswith("```"):
         text = text.replace("```json", "").replace("```", "").strip()
 
     return json.loads(text)
