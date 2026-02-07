@@ -8,71 +8,37 @@
 <body>
 
 <div class="container">
+  <h1>Q-GEN AI</h1>
+  <p class="sub">Người bạn ôn tập số</p>
 
-  <h1 class="title">
-    Q-GEN AI<br>
-    <span>Người bạn ôn tập số</span>
-  </h1>
+  <button class="create-btn" onclick="openModal()">+ Tạo Bài Tập Mới</button>
+  <p class="hint">Nhấn để AI tạo câu hỏi</p>
 
-  <p class="desc">
-    Tạo bài tập trắc nghiệm tự động bằng AI
-  </p>
-
-  <div class="card">
-    <button class="create-btn" onclick="openModal()">
-      + Tạo Bài Tập Mới
-    </button>
-    <p class="note">
-      Nhấn để AI tạo câu hỏi
-    </p>
-  </div>
-
-  <!-- HIỂN THỊ KẾT QUẢ -->
-  <div id="result" style="margin-top:30px; white-space:pre-wrap;"></div>
-
+  <div id="result"></div>
 </div>
 
-<!-- MODAL -->
 <div class="modal" id="modal">
-  <div class="modal-content">
+  <div class="modal-box">
+    <h2>Tạo bài tập</h2>
 
-    <h2>Tạo Bài Tập</h2>
-    <label>Tiêu đề bài tập</label>
-<input type="text" id="title" placeholder="Ví dụ: Ôn tập chương 1">
-    <label>Nội dung bài học</label>
-    <textarea id="content"></textarea>
+    <input id="title" placeholder="Tiêu đề bài tập">
+    <textarea id="content" placeholder="Nội dung bài học"></textarea>
 
-    
-
-<label>Loại câu hỏi</label>
-<select id="questionType">
-  <option value="true_false">Đúng / Sai</option>
-  <option value="single_choice">Trắc nghiệm 1 đáp án</option>
-  <option value="multiple_choice">Trắc nghiệm nhiều đáp án</option>
-</select>
-
-    <label>Độ khó</label>
     <select id="difficulty">
-      <option value="dễ">Dễ</option>
-      <option value="trung bình">Trung bình</option>
-      <option value="khó">Khó</option>
+      <option>Dễ</option>
+      <option>Trung bình</option>
+      <option>Khó</option>
     </select>
 
-    <label>Số câu hỏi</label>
     <input type="number" id="count" value="5">
 
-    <div class="modal-actions">
-      <button class="cancel" onclick="closeModal()">Hủy</button>
-      <button class="submit" type="button" onclick="generate()">Tạo</button>
-
+    <div class="actions">
+      <button onclick="closeModal()">Hủy</button>
+      <button onclick="generate()">Tạo</button>
     </div>
-
   </div>
 </div>
 
 <script src="script.js"></script>
 </body>
 </html>
-
-
-
