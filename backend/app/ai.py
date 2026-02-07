@@ -1,26 +1,38 @@
 import google.generativeai as genai
+import json
 import os
-from dotenv import load_dotenv
-
-load_dotenv()  # load file .env
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 model = genai.GenerativeModel("gemini-pro")
 
-def generate_questions(content, qtype, difficulty, count):
+def generate_questions(content: str, count: int):
     prompt = f"""
-    Bạn là giáo viên THPT.
+Tạo {count} câu hỏi trắc nghiệm 1 đáp án đúng từ nội dung sau:
 
-    Hãy tạo {count} câu hỏi dạng {qtype},
-    độ khó: {difficulty}.
+\"\"\"{content}\"\"\"
 
-    Nội dung bài học:
-    {content}
+YÊU CẦU:
+- Mỗi câu có 4 đáp án A B C D
+- Chỉ 1 đáp án đúng
+- Trả về JSON THUẦN, KHÔNG giải thích, KHÔNG markdown
 
-    Mỗi câu có 4 đáp án A, B, C, D
-    và ghi rõ đáp án đúng.
-    """
+FORMAT:
+[
+  {{
+    "question": "...",
+    "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
+    "answer": ["A"]
+  }}
+]
+"""
 
     response = model.generate_content(prompt)
-    return response.text
+
+    text = response.text.strip()
+
+    # Phòng AI trả ```json
+    if text.startswith("```"):
+        text = text.replace("```json", "").replace("```", "").strip()
+
+    return json.loads(text)
