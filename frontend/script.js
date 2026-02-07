@@ -1,20 +1,19 @@
-// MỞ MODAL
+// ================== MODAL ==================
 function openModal() {
   document.getElementById("modal").style.display = "flex";
 }
 
-// ĐÓNG MODAL
 function closeModal() {
   document.getElementById("modal").style.display = "none";
 }
 
-// CLICK RA NGOÀI MODAL
+// click ra ngoài modal
 window.onclick = function (e) {
   const modal = document.getElementById("modal");
   if (e.target === modal) closeModal();
 };
 
-// TẠO BÀI TẬP
+// ================== TẠO BÀI TẬP ==================
 async function generate() {
   const title = document.getElementById("title").value || "Bài tập";
   const content = document.getElementById("content").value;
@@ -23,17 +22,19 @@ async function generate() {
   const resultBox = document.getElementById("result");
 
   if (!content.trim()) {
-    resultBox.innerText = "⚠️ Vui lòng nhập nội dung bài học";
+    alert("Vui lòng nhập nội dung bài học");
     return;
   }
 
-  resultBox.innerText = "🤖 AI đang tạo câu hỏi...";
   closeModal();
+  resultBox.innerHTML = "🤖 AI đang tạo câu hỏi...";
 
   try {
     const res = await fetch("https://taobaitap.onrender.com/generate", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         title,
         content,
@@ -47,36 +48,49 @@ async function generate() {
 
     const data = await res.json();
 
-    // ===== HIỂN THỊ CÂU HỎI =====
+    // ================== HIỂN THỊ CÂU HỎI ==================
     let html = `<h2>${data.title}</h2><form id="quizForm">`;
 
     data.questions.forEach((q, i) => {
-      html += `<div style="margin-bottom:20px">
-        <p><b>Câu ${i + 1}: ${q.question}</b></p>`;
+      html += `
+        <div style="margin-bottom:20px; padding:10px; border:1px solid #ddd; border-radius:8px">
+          <p><b>Câu ${i + 1}: ${q.question}</b></p>
+      `;
 
       q.options.forEach(opt => {
         html += `
-          <label>
+          <label style="display:block; margin:4px 0">
             <input type="radio" name="q${i}" value="${opt}">
             ${opt}
-          </label><br>
+          </label>
         `;
       });
 
       html += `</div>`;
     });
 
-    html += `<button type="submit">📤 Nộp bài</button></form>`;
+    html += `
+      <button type="submit" style="padding:10px 20px; font-size:16px">
+        📤 Nộp bài
+      </button>
+    </form>
+    `;
+
     resultBox.innerHTML = html;
 
-    // CHECK ĐÁP ÁN
+    // ================== CHẤM ĐIỂM ==================
     document.getElementById("quizForm").onsubmit = function (e) {
       e.preventDefault();
+
       let score = 0;
 
       data.questions.forEach((q, i) => {
-        const chosen = document.querySelector(`input[name="q${i}"]:checked`);
-        if (chosen && q.answer.includes(chosen.value)) score++;
+        const chosen = document.querySelector(
+          `input[name="q${i}"]:checked`
+        );
+        if (chosen && q.answer.includes(chosen.value)) {
+          score++;
+        }
       });
 
       alert(`✅ Bạn đúng ${score}/${data.questions.length} câu`);
@@ -84,6 +98,6 @@ async function generate() {
 
   } catch (err) {
     console.error(err);
-    resultBox.innerText = "❌ Không thể tạo câu hỏi";
+    resultBox.innerHTML = "❌ Không thể tạo câu hỏi. Kiểm tra server / API key.";
   }
 }
