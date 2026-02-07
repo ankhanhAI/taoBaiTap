@@ -1,3 +1,22 @@
+// MỞ MODAL
+function openModal() {
+  document.getElementById("modal").style.display = "flex";
+}
+
+// ĐÓNG MODAL
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+// ĐÓNG MODAL KHI CLICK RA NGOÀI
+window.onclick = function (e) {
+  const modal = document.getElementById("modal");
+  if (e.target === modal) {
+    closeModal();
+  }
+};
+
+// TẠO BÀI TẬP BẰNG AI
 async function generate() {
   const content = document.getElementById("content").value;
   const difficulty = document.getElementById("difficulty").value;
@@ -8,6 +27,8 @@ async function generate() {
     resultBox.innerText = "⚠️ Vui lòng nhập nội dung bài học";
     return;
   }
+
+  closeModal(); // đóng modal khi bắt đầu tạo
 
   resultBox.innerText = "🤖 AI đang tạo câu hỏi, vui lòng chờ...";
 
