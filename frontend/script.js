@@ -9,7 +9,6 @@ async function generate() {
     return;
   }
 
-  closeModal();
   resultBox.innerText = "🤖 AI đang tạo câu hỏi...";
 
   try {
@@ -24,28 +23,18 @@ async function generate() {
       })
     });
 
+    if (!res.ok) throw new Error("Server lỗi");
+
     const data = await res.json();
 
-    if (!data.questions || data.questions.length === 0) {
-      resultBox.innerText = "⚠️ Không có câu hỏi được tạo";
-      return;
-    }
-
-    let html = `<h2>${data.title}</h2>`;
-
-    data.questions.forEach((q, i) => {
-      html += `
-        <div style="margin-bottom:20px;">
-          <p><b>Câu ${i + 1}: ${q.question}</b></p>
-          ${q.options.map(opt => `<div>◯ ${opt}</div>`).join("")}
-        </div>
-      `;
-    });
-
-    resultBox.innerHTML = html;
+    // 👉 TEST TẠM: HIỆN PAYLOAD
+    resultBox.innerHTML = `
+      <h3>${data.result}</h3>
+      <pre>${JSON.stringify(data.payload, null, 2)}</pre>
+    `;
 
   } catch (err) {
     console.error(err);
-    resultBox.innerText = "❌ Không thể kết nối server";
+    resultBox.innerText = "❌ Lỗi kết nối server";
   }
 }
