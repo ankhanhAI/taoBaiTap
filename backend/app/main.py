@@ -1,22 +1,20 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-from app.ai import generate_questions
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-class Data(BaseModel):
-    title: str
-    content: str
-    type: str
-    difficulty: str
-    count: int
+# ✅ BẬT CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/generate")
-def generate(data: Data):
-    result = generate_questions(
-        data.content,
-        data.type,
-        data.difficulty,
-        data.count
-    )
-    return {"result": result}
+async def generate_quiz(payload: dict):
+    return {
+        "result": "TEST OK – Backend đã nhận dữ liệu",
+        "payload": payload
+    }
