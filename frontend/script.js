@@ -36,20 +36,21 @@ async function generate() {
     const controller = new AbortController();
     setTimeout(() => controller.abort(), 60000); // timeout 60s
 
-    const res = await fetch("https://taobaitap.onrender.com/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        title: "Bài học",
-        content: content,
-        type: "trắc nghiệm",
-        difficulty: difficulty,
-        count: Number(count)
-      }),
-      signal: controller.signal
-    });
+    const res = await fetch("https://taobaitap.onrender.com/generate-quiz", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    title: "Bài học",
+    content,
+    type: "trắc nghiệm",
+    difficulty,
+    count: Number(count)
+  }),
+  signal: controller.signal
+});
+
 
     if (!res.ok) {
       throw new Error("Server lỗi");
@@ -68,3 +69,4 @@ async function generate() {
     console.error(err);
   }
 }
+
