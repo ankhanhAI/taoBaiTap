@@ -1,3 +1,11 @@
+function openModal() {
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
 async function generate() {
   const content = document.getElementById("content").value;
   const difficulty = document.getElementById("difficulty").value;
@@ -53,3 +61,4 @@ async function generate() {
     resultBox.innerText = "❌ Không thể tạo câu hỏi";
   }
 }
+
