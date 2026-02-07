@@ -1,11 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import openai
-import os
-import json
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
+from app.ai import generate_questions
 
 app = FastAPI()
 
@@ -25,34 +21,10 @@ class GenerateRequest(BaseModel):
 
 @app.post("/generate")
 async def generate_quiz(data: GenerateRequest):
-    prompt = f"""
-Tạo {data.count} câu hỏi trắc nghiệm 1 đáp án từ nội dung sau:
+    questions = generate_questions(data.content, data.count)
 
-Nội dung: {data.content}
-
-Yêu cầu:
-- Mỗi câu có 4 đáp án A B C D
-- Chỉ có 1 đáp án đúng
-- Trả về JSON theo mẫu:
-
-{{
-  "title": "{data.title}",
-  "questions": [
-    {{
-      "question": "...",
-      "options": ["A ...", "B ...", "C ...", "D ..."],
-      "answer": ["A ..."]
-    }}
-  ]
-}}
-"""
-
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.7
-    )
-
-    text = response.choices[0].message.content
-
-    return json.loads(text)
+    return {
+        "title": data.title,
+        "type": data.type,
+        "questions": questions
+    }
