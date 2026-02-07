@@ -18,23 +18,38 @@ async function generate() {
       body: JSON.stringify({
         title: "Bài học",
         content,
+        type: "trắc nghiệm",   // ✅ BẮT BUỘC
         difficulty,
         count: Number(count)
       })
     });
 
-    if (!res.ok) throw new Error("Server lỗi");
+    if (!res.ok) {
+      throw new Error("Server lỗi");
+    }
 
     const data = await res.json();
 
-    // 👉 TEST TẠM: HIỆN PAYLOAD
-    resultBox.innerHTML = `
-      <h3>${data.result}</h3>
-      <pre>${JSON.stringify(data.payload, null, 2)}</pre>
-    `;
+    // ✅ HIỂN THỊ CÂU HỎI
+    let html = `<h2>${data.title}</h2>`;
+
+    data.questions.forEach((q, i) => {
+      html += `
+        <div style="margin-bottom:20px;">
+          <p><b>Câu ${i + 1}: ${q.question}</b></p>
+      `;
+
+      q.options.forEach(opt => {
+        html += `<div>◯ ${opt}</div>`;
+      });
+
+      html += `</div>`;
+    });
+
+    resultBox.innerHTML = html;
 
   } catch (err) {
     console.error(err);
-    resultBox.innerText = "❌ Lỗi kết nối server";
+    resultBox.innerText = "❌ Không thể tạo câu hỏi";
   }
 }
