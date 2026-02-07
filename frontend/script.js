@@ -20,7 +20,7 @@ async function generateAI() {
 
   document.getElementById("result").innerText = "⏳ AI đang tạo câu hỏi...";
 
-  const res = await fetch("https://YOUR-BACKEND.onrender.com/generate", {
+  const res = await fetch("https://taobaitap.onrender.com/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -35,3 +35,4 @@ async function generateAI() {
   const data = await res.json();
   document.getElementById("result").innerText = data.result;
 }
+
