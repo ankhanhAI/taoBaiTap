@@ -65,9 +65,18 @@ async function generate() {
     }
 
   } catch (err) {
-    resultBox.innerText = "❌ Lỗi tạo câu hỏi hoặc server quá chậm";
-    console.error(err);
+  console.error("FETCH ERROR:", err);
+
+  if (err.name === "AbortError") {
+    resultBox.innerText = "⏳ Server phản hồi quá chậm (timeout 60s)";
+  } else if (err.message) {
+    resultBox.innerText = "❌ Lỗi: " + err.message;
+  } else {
+    resultBox.innerText = "❌ Không thể kết nối tới server";
   }
 }
+
+}
+
 
 
