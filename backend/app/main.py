@@ -1,7 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from app.ai import generate_questions
+import google.generativeai as genai
+import os
+import json
+
+# ===== CONFIG GEMINI =====
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel("gemini-pro")
 
 app = FastAPI()
 
@@ -21,10 +27,30 @@ class GenerateRequest(BaseModel):
 
 @app.post("/generate")
 async def generate_quiz(data: GenerateRequest):
-    questions = generate_questions(data.content, data.count)
+    prompt = f"""
+Tạo {data.count} câu hỏi trắc nghiệm 1 đáp án đúng từ nội dung sau:
 
-    return {
-        "title": data.title,
-        "type": data.type,
-        "questions": questions
-    }
+\"\"\"{data.content}\"\"\"  
+
+CHỈ TRẢ VỀ JSON, KHÔNG GIẢI THÍCH:
+
+{{
+  "title": "{data.title}",
+  "questions": [
+    {{
+      "question": "...",
+      "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
+      "answer": ["A. ..."]
+    }}
+  ]
+}}
+"""
+
+    response = model.generate_content(prompt)
+    text = response.text.strip()
+
+    # dọn ```json nếu có
+    if "```" in text:
+        text = text.replace("```json", "").replace("```", "").strip()
+
+    return json.loads(text)
