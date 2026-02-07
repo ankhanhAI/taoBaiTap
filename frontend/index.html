@@ -8,6 +8,7 @@
 <body>
 
 <div class="container">
+
   <h1 class="title">
     Q-GEN AI<br>
     <span>Người bạn ôn tập số</span>
@@ -17,27 +18,44 @@
     Tạo bài tập trắc nghiệm tự động bằng AI
   </p>
 
-  <!-- FORM -->
-  <div class="form">
+  <div class="card">
+    <button class="create-btn" onclick="openModal()">
+      + Tạo Bài Tập Mới
+    </button>
+    <p class="note">
+      Nhấn để AI tạo câu hỏi
+    </p>
+  </div>
+
+  <!-- HIỂN THỊ KẾT QUẢ -->
+  <div id="result" style="margin-top:30px; white-space:pre-wrap;"></div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+
+    <h2>Tạo Bài Tập</h2>
+
     <label>Nội dung bài học</label>
-    <textarea id="content" placeholder="Ví dụ: Hàm số bậc hai y = ax² + bx + c"></textarea>
+    <textarea id="content"></textarea>
 
     <label>Độ khó</label>
     <select id="difficulty">
       <option value="dễ">Dễ</option>
-      <option value="trung bình" selected>Trung bình</option>
+      <option value="trung bình">Trung bình</option>
       <option value="khó">Khó</option>
     </select>
 
     <label>Số câu hỏi</label>
-    <input type="number" id="count" value="5" min="1" max="20">
+    <input type="number" id="count" value="5">
 
-    <button onclick="generate()">🚀 Tạo câu hỏi</button>
-  </div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal()">Hủy</button>
+      <button class="submit" onclick="generate()">Tạo</button>
+    </div>
 
-  <!-- KẾT QUẢ -->
-  <div id="result" class="result">
-    <!-- AI trả kết quả ở đây -->
   </div>
 </div>
 
