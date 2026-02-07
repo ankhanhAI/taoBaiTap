@@ -1,64 +1,50 @@
 function openModal() {
-  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modal").style.display = "block";
 }
-
 function closeModal() {
   document.getElementById("modal").style.display = "none";
 }
 
 async function generate() {
-  const content = document.getElementById("content").value;
-  const difficulty = document.getElementById("difficulty").value;
-  const count = document.getElementById("count").value;
-  const resultBox = document.getElementById("result");
+  const res = await fetch("https://taobaitap.onrender.com/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      title: title.value,
+      content: content.value,
+      difficulty: difficulty.value,
+      count: Number(count.value)
+    })
+  });
 
-  if (!content.trim()) {
-    resultBox.innerText = "⚠️ Vui lòng nhập nội dung bài học";
-    return;
-  }
+  const data = await res.json();
+  closeModal();
 
-  resultBox.innerText = "🤖 AI đang tạo câu hỏi...";
+  let html = `<h2>${data.title}</h2><form id="quiz">`;
 
-  try {
-    const res = await fetch("https://taobaitap.onrender.com/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: "Bài học",
-        content,
-        type: "trắc nghiệm",   // ✅ BẮT BUỘC
-        difficulty,
-        count: Number(count)
-      })
-    });
-
-    if (!res.ok) {
-      throw new Error("Server lỗi");
-    }
-
-    const data = await res.json();
-
-    // ✅ HIỂN THỊ CÂU HỎI
-    let html = `<h2>${data.title}</h2>`;
-
-    data.questions.forEach((q, i) => {
+  data.questions.forEach((q, i) => {
+    html += `<p><b>Câu ${i+1}: ${q.question}</b></p>`;
+    q.options.forEach(opt => {
       html += `
-        <div style="margin-bottom:20px;">
-          <p><b>Câu ${i + 1}: ${q.question}</b></p>
+        <label>
+          <input type="radio" name="q${i}" value="${opt[0]}">
+          ${opt}
+        </label><br>
       `;
-
-      q.options.forEach(opt => {
-        html += `<div>◯ ${opt}</div>`;
-      });
-
-      html += `</div>`;
     });
+  });
 
-    resultBox.innerHTML = html;
+  html += `<button type="button" onclick="submitQuiz()">Nộp bài</button></form>`;
+  document.getElementById("result").innerHTML = html;
 
-  } catch (err) {
-    console.error(err);
-    resultBox.innerText = "❌ Không thể tạo câu hỏi";
-  }
+  window.correctAnswers = data.questions.map(q => q.answer);
 }
 
+function submitQuiz() {
+  let score = 0;
+  correctAnswers.forEach((ans, i) => {
+    const pick = document.querySelector(`input[name=q${i}]:checked`);
+    if (pick && pick.value === ans) score++;
+  });
+  alert(`Bạn đúng ${score}/${correctAnswers.length} câu`);
+}
