@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>AK AI</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+
+  <h1 class="title">
+    AK AI: NGƯỜI BẠN ÔN TẬP SỐ<br>
+    CỦA HỌC SINH THPT
+  </h1>
+
+  <p class="teacher">
+    Giáo viên hướng dẫn:
+    <span>Phương Võ</span>
+  </p>
+
+  <p class="student">
+    Học sinh:
+    <span>Đào Trọng Khánh</span>
+  </p>
+
+  <p class="desc">
+    Tạo và quản lý bộ câu hỏi của bạn một cách dễ dàng
+  </p>
+
+  <div class="card">
+    <button class="create-btn" onclick="openModal()">
+      + Tạo Bài Tập Mới
+    </button>
+
+    <p class="note">
+      Nhấn vào nút để bắt đầu tạo bài tập với AI
+    </p>
+  </div>
+
+</div>
+
+<!-- MODAL TẠO BÀI TẬP -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+
+    <h2>Tạo Bài Tập Mới</h2>
+
+    <label>Tên bài tập</label>
+    <input id="title" type="text" placeholder="Ví dụ: Ôn tập chương 1">
+
+    <label>Nội dung bài học</label>
+    <textarea id="content" placeholder="Dán nội dung bài học vào đây..."></textarea>
+
+    <label>Loại câu hỏi</label>
+    <select id="type">
+      <option>Trắc nghiệm 1 đáp án</option>
+      <option>Đúng / Sai</option>
+      <option>Trắc nghiệm nhiều đáp án</option>
+    </select>
+
+    <label>Độ khó</label>
+    <select id="difficulty">
+      <option>Dễ</option>
+      <option selected>Trung bình</option>
+      <option>Khó</option>
+    </select>
+
+    <label>Số câu hỏi</label>
+    <input id="count" type="number" value="5" min="1">
+
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal()">Hủy</button>
+      <button class="submit" onclick="generateAI()">Tạo bằng AI</button>
+    </div>
+
+    <hr>
+
+    <h3>Kết quả AI</h3>
+    <pre id="result">Chưa có câu hỏi nào.</pre>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
