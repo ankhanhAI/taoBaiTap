@@ -34,8 +34,9 @@ FORMAT JSON BẮT BUỘC:
 `;
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash"
-    });
+  model: "gemini-1.0-pro"
+});
+
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
@@ -61,3 +62,4 @@ FORMAT JSON BẮT BUỘC:
     });
   }
 };
+
