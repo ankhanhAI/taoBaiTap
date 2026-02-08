@@ -37,7 +37,11 @@ async function submitForm() {
     const result = await res.json();
 
     // LƯU KẾT QUẢ AI (KHÔNG LƯU FORM NỮA)
-    localStorage.setItem("aiQuestions", result.data);
+  localStorage.setItem(
+  "aiQuestions",
+  JSON.stringify(result.data)
+);
+
 
     // CHUYỂN TRANG
     window.location.href = "/result";
@@ -47,4 +51,5 @@ async function submitForm() {
     console.error(err);
   }
 }
+
 
