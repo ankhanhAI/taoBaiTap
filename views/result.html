@@ -17,15 +17,26 @@
   </div>
 
   <script>
-  // 1️⃣ LẤY KẾT QUẢ AI
+  // 1️⃣ LẤY KẾT QUẢ AI (AN TOÀN)
   const raw = localStorage.getItem("aiQuestions");
 
-  if (!raw) {
-    alert("Không có dữ liệu AI!");
-    window.location.href = "index.html";
+  if (!raw || raw === "undefined") {
+    alert("❌ Không có dữ liệu AI hợp lệ");
+    window.location.href = "/";
   }
 
-  const questions = JSON.parse(raw);
+  let questions = [];
+  try {
+    questions = JSON.parse(raw);
+  } catch (e) {
+    alert("❌ Dữ liệu AI bị lỗi");
+    window.location.href = "/";
+  }
+
+  if (!Array.isArray(questions) || questions.length === 0) {
+    document.getElementById("question-list").innerHTML =
+      "<p>❌ Không có câu hỏi nào</p>";
+  }
 
   // 2️⃣ HIỂN THỊ THÔNG TIN CHUNG
   document.getElementById("title").innerText = "📘 Bài tập do AI tạo";
@@ -41,7 +52,7 @@
       <strong>Câu ${count++}:</strong>
       <p>${q.question}</p>`;
 
-    if (q.type === "single" || q.type === "multi") {
+    if ((q.type === "single" || q.type === "multi") && Array.isArray(q.options)) {
       q.options.forEach(opt => {
         html += `
           <label>
@@ -63,7 +74,7 @@
     container.innerHTML += html;
   }
 
-  // 4️⃣ RENDER TOÀN BỘ CÂU HỎI AI
+  // 4️⃣ RENDER TOÀN BỘ CÂU HỎI
   questions.forEach(q => addQuestion(q));
 
   function goBack() {
@@ -71,7 +82,9 @@
   }
 </script>
 
+
 </body>
 </html>
+
 
 
