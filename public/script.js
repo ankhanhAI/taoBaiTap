@@ -40,10 +40,11 @@ async function submitForm() {
     localStorage.setItem("aiQuestions", result.data);
 
     // CHUYỂN TRANG
-    window.location.href = "result.html";
+    window.location.href = "/result";
 
   } catch (err) {
     alert("❌ Lỗi khi tạo câu hỏi AI");
     console.error(err);
   }
 }
+
