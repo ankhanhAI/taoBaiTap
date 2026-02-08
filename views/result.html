@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Kết quả bài tập - Q-GEN AI</title>
+  <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+
+  <div class="wrapper">
+    <h2 id="title"></h2>
+    <p class="sub" id="info"></p>
+
+    <div id="question-list"></div>
+
+    <button class="submit" onclick="goBack()">⬅ Quay lại</button>
+  </div>
+
+  <script>
+  // 1️⃣ LẤY KẾT QUẢ AI
+  const raw = localStorage.getItem("aiQuestions");
+
+  if (!raw) {
+    alert("Không có dữ liệu AI!");
+    window.location.href = "index.html";
+  }
+
+  const questions = JSON.parse(raw);
+
+  // 2️⃣ HIỂN THỊ THÔNG TIN CHUNG
+  document.getElementById("title").innerText = "📘 Bài tập do AI tạo";
+  document.getElementById("info").innerText =
+    `Tổng số câu hỏi: ${questions.length}`;
+
+  const container = document.getElementById("question-list");
+  let count = 1;
+
+  // 3️⃣ HÀM RENDER 1 CÂU HỎI
+  function addQuestion(q) {
+    let html = `<div class="card">
+      <strong>Câu ${count++}:</strong>
+      <p>${q.question}</p>`;
+
+    if (q.type === "single" || q.type === "multi") {
+      q.options.forEach(opt => {
+        html += `
+          <label>
+            <input type="${q.type === "multi" ? "checkbox" : "radio"}" disabled>
+            ${opt}
+          </label><br>
+        `;
+      });
+    }
+
+    if (q.type === "tf") {
+      html += `
+        <label><input type="radio" disabled> Đúng</label><br>
+        <label><input type="radio" disabled> Sai</label>
+      `;
+    }
+
+    html += `</div>`;
+    container.innerHTML += html;
+  }
+
+  // 4️⃣ RENDER TOÀN BỘ CÂU HỎI AI
+  questions.forEach(q => addQuestion(q));
+
+  function goBack() {
+    window.location.href = "index.html";
+  }
+</script>
+
+</body>
+</html>
