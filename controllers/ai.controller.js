@@ -39,7 +39,7 @@ FORMAT JSON BẮT BUỘC:
 `;
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash"
+      model: "gemini-pro"
     });
 
     const result = await model.generateContent(prompt);
@@ -65,3 +65,4 @@ FORMAT JSON BẮT BUỘC:
     res.status(500).json({ error: "Gemini error" });
   }
 };
+
