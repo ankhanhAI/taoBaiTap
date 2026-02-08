@@ -1,47 +1,42 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-export const generateQuestions = async (req, res) => {
-  const { title, content, single, tf, multi, level } = req.body;
+export const generateAI = async (req, res) => {
+  const { content, single, tf, multi, level } = req.body;
 
   const prompt = `
 Bạn là giáo viên THPT.
-Hãy tạo câu hỏi trắc nghiệm Toán bằng tiếng Việt.
+Tạo câu hỏi theo JSON.
 
-Chủ đề: ${content}
+Nội dung: ${content}
 Độ khó: ${level}
 
 Yêu cầu:
-- ${single} câu trắc nghiệm 1 đáp án
-- ${tf} câu đúng/sai
-- ${multi} câu nhiều đáp án
+- ${single} trắc nghiệm 1 đáp án
+- ${tf} đúng/sai
+- ${multi} nhiều đáp án
 
-Trả về JSON chuẩn:
+CHỈ TRẢ JSON:
 [
   {
-    "type": "single | tf | multi",
+    "type": "single",
     "question": "...",
-    "options": ["A", "B", "C", "D"],
-    "answer": "..."
+    "options": ["A","B","C","D"]
   }
 ]
 `;
 
   try {
-    const response = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }]
-    });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(prompt);
 
-    res.json({
-      data: response.choices[0].message.content
-    });
+    const text = result.response.text();
+    const json = text.match(/\[.*\]/s)?.[0];
 
+    res.json({ data: JSON.parse(json) });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "AI generation failed" });
+    res.status(500).json({ error: "Gemini error" });
   }
 };
