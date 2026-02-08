@@ -60,3 +60,4 @@ export const generateAI = async (req, res) => {
     });
   }
 };
+
