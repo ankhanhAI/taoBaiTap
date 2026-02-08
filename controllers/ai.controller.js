@@ -1,9 +1,13 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
 export const generateAI = async (req, res) => {
   try {
     const { content, single, tf, multi, level } = req.body;
 
     const prompt = `
-CHỈ TRẢ VỀ JSON. KHÔNG GIẢI THÍCH.
+CHỈ TRẢ VỀ JSON. KHÔNG GIẢI THÍCH. KHÔNG TEXT.
 
 Tạo câu hỏi Toán THPT.
 
@@ -12,7 +16,7 @@ Nội dung: ${content}
 
 Tổng số:
 - ${single} câu single
-- ${tf} câu đúng sai
+- ${tf} câu đúng/sai
 - ${multi} câu nhiều đáp án
 
 FORMAT JSON:
@@ -25,38 +29,31 @@ FORMAT JSON:
 ]
 `;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: prompt }]
-            }
-          ]
-        })
-      }
-    );
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash-latest"
+    });
 
-    const result = await response.json();
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
 
-    if (!result.candidates) {
-      throw new Error("Gemini không trả dữ liệu");
-    }
-
-    const text = result.candidates[0].content.parts[0].text;
+    console.log("🟢 GEMINI RAW:", text);
 
     const start = text.indexOf("[");
     const end = text.lastIndexOf("]");
 
-    const data = JSON.parse(text.slice(start, end + 1));
+    if (start === -1 || end === -1) {
+      throw new Error("Gemini did not return JSON");
+    }
 
-    res.json({ data });
+    const json = JSON.parse(text.slice(start, end + 1));
+
+    res.json({ data: json });
 
   } catch (err) {
-    console.error("❌ GEMINI ERROR:", err.message);
-    res.status(500).json({ error: "Gemini error", detail: err.message });
+    console.error("❌ GEMINI ERROR:", err);
+    res.status(500).json({
+      error: "Gemini error",
+      detail: err.message
+    });
   }
 };
