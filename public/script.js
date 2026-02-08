@@ -24,7 +24,6 @@ async function submitForm() {
     level: document.getElementById("level").value
   };
 
-  // UI loading (ăn điểm đồ án)
   alert("🤖 AI đang tạo câu hỏi, vui lòng đợi...");
 
   try {
@@ -35,21 +34,26 @@ async function submitForm() {
     });
 
     const result = await res.json();
+    console.log("✅ AI RESPONSE:", result);
 
-    // LƯU KẾT QUẢ AI (KHÔNG LƯU FORM NỮA)
-  localStorage.setItem(
-  "aiQuestions",
-  JSON.stringify(result.data)
-);
+    if (!result || !Array.isArray(result.data)) {
+      alert("❌ AI không trả dữ liệu hợp lệ");
+      return;
+    }
 
+    localStorage.setItem(
+      "aiQuestions",
+      JSON.stringify(result.data)
+    );
 
-    // CHUYỂN TRANG
     window.location.href = "/result";
 
   } catch (err) {
-    alert("❌ Lỗi khi tạo câu hỏi AI");
     console.error(err);
+    alert("❌ Lỗi khi gọi AI");
   }
 }
+
+
 
 
