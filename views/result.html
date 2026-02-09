@@ -3,88 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <title>Kết quả bài tập - Q-GEN AI</title>
-  <link rel="stylesheet" href="/style.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; color: #333; }
+    .wrapper { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .card { border: 1px solid #eee; padding: 15px; margin-bottom: 20px; border-radius: 8px; line-height: 1.6; }
+    .card strong { color: #007bff; display: block; margin-bottom: 10px; }
+    .option-item { display: flex; align-items: center; margin: 8px 0; }
+    input[type="radio"], input[type="checkbox"] { margin-right: 10px; }
+    .submit { background: #333; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+    .submit:hover { background: #000; }
+    /* Fix cho KaTeX không bị tràn khung */
+    .katex { font-size: 1.1em; }
+  </style>
 </head>
 <body>
 
   <div class="wrapper">
     <h2 id="title"></h2>
     <p class="sub" id="info"></p>
-
     <div id="question-list"></div>
-
     <button class="submit" onclick="goBack()">⬅ Quay lại</button>
   </div>
 
   <script>
-  // 1️⃣ LẤY KẾT QUẢ AI (AN TOÀN)
-  const raw = localStorage.getItem("aiQuestions");
+    const raw = localStorage.getItem("aiQuestions");
+    if (!raw || raw === "undefined") window.location.href = "/";
 
-  if (!raw || raw === "undefined") {
-    alert("❌ Không có dữ liệu AI hợp lệ");
-    window.location.href = "/";
-  }
+    let questions = [];
+    try {
+      questions = JSON.parse(raw);
+    } catch (e) {
+      alert("Dữ liệu lỗi");
+      window.location.href = "/";
+    }
 
-  let questions = [];
-  try {
-    questions = JSON.parse(raw);
-  } catch (e) {
-    alert("❌ Dữ liệu AI bị lỗi");
-    window.location.href = "/";
-  }
+    document.getElementById("title").innerText = "📘 Bài tập do AI tạo (Gemini 3 Flash)";
+    document.getElementById("info").innerText = `Tổng số câu hỏi: ${questions.length}`;
 
-  if (!Array.isArray(questions) || questions.length === 0) {
-    document.getElementById("question-list").innerHTML =
-      "<p>❌ Không có câu hỏi nào</p>";
-  }
+    const container = document.getElementById("question-list");
 
-  // 2️⃣ HIỂN THỊ THÔNG TIN CHUNG
-  document.getElementById("title").innerText = "📘 Bài tập do AI tạo";
-  document.getElementById("info").innerText =
-    `Tổng số câu hỏi: ${questions.length}`;
+    function renderQuestions() {
+      let html = "";
+      questions.forEach((q, index) => {
+        html += `<div class="card">
+          <strong>Câu ${index + 1}:</strong>
+          <div class="question-text">${q.question}</div>`;
 
-  const container = document.getElementById("question-list");
-  let count = 1;
+        // Câu trắc nghiệm
+        if ((q.type === "single" || q.type === "multi") && q.options) {
+          q.options.forEach(opt => {
+            html += `<div class="option-item">
+              <input type="${q.type === "multi" ? "checkbox" : "radio"}" disabled> <span>${opt}</span>
+            </div>`;
+          });
+        }
 
-  // 3️⃣ HÀM RENDER 1 CÂU HỎI
-  function addQuestion(q) {
-    let html = `<div class="card">
-      <strong>Câu ${count++}:</strong>
-      <p>${q.question}</p>`;
-
-    if ((q.type === "single" || q.type === "multi") && Array.isArray(q.options)) {
-      q.options.forEach(opt => {
-        html += `
-          <label>
-            <input type="${q.type === "multi" ? "checkbox" : "radio"}" disabled>
-            ${opt}
-          </label><br>
-        `;
+        // Câu đúng/sai
+        if (q.type === "tf") {
+          html += `
+            <div class="option-item"><input type="radio" disabled> Đúng</div>
+            <div class="option-item"><input type="radio" disabled> Sai</div>
+          `;
+        }
+        
+        html += `</div>`;
       });
+      container.innerHTML = html;
+
+      // Kích hoạt KaTeX để quét và hiển thị công thức
+      if (window.renderMathInElement) {
+        renderMathInElement(container, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ],
+          throwOnError: false
+        });
+      }
     }
 
-    if (q.type === "tf") {
-      html += `
-        <label><input type="radio" disabled> Đúng</label><br>
-        <label><input type="radio" disabled> Sai</label>
-      `;
-    }
+    // Chạy render ngay khi trang load
+    window.onload = renderQuestions;
 
-    html += `</div>`;
-    container.innerHTML += html;
-  }
-
-  // 4️⃣ RENDER TOÀN BỘ CÂU HỎI
-  questions.forEach(q => addQuestion(q));
-
-  function goBack() {
-    window.location.href = "/";
-  }
-</script>
-
-
+    function goBack() { window.location.href = "/"; }
+  </script>
 </body>
 </html>
-
-
-
