@@ -26,7 +26,7 @@ export const generateAI = async (req, res) => {
 
     const model = genAI.getGenerativeModel({
       // Chuyển sang model Pro mạnh mẽ nhất để xử lý logic
-      model: "gemini-3-pro-preview", 
+      model: "gemini-3-flash-preview", 
       systemInstruction: "Bạn là một giảng viên Toán học cấp cao. Nhiệm vụ của bạn là tạo đề thi với độ chính xác 100% về số lượng và kiến thức.",
       generationConfig: {
         responseMimeType: "application/json",
@@ -65,3 +65,4 @@ export const generateAI = async (req, res) => {
     res.status(500).json({ success: false, message: "Lỗi AI Pro: " + err.message });
   }
 };
+
