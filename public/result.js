@@ -8,6 +8,7 @@ let questions = [];
 
 try {
     questions = JSON.parse(rawData);
+    console.log("Dữ liệu thực tế AI trả về:", questions.length, questions);
     if (!Array.isArray(questions) || questions.length === 0) throw new Error();
 } catch (e) {
     // Nếu không có dữ liệu, tự động quay về trang chủ
