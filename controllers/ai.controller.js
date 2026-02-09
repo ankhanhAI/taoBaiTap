@@ -1,3 +1,4 @@
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 export const generateAI = async (req, res) => {
   try {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -42,3 +43,4 @@ export const generateAI = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
+
