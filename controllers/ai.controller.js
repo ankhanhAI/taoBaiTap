@@ -6,9 +6,8 @@ export const generateAI = async (req, res) => {
     if (!apiKey) return res.status(500).json({ error: "Thiếu API Key." });
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const { content, config, level } = req.body; 
+    const { content, config, level, title } = req.body; 
 
-    // Schema vẫn giữ nguyên để đảm bảo tính đồng bộ với giao diện
     const schema = {
       type: SchemaType.ARRAY,
       items: {
@@ -25,44 +24,47 @@ export const generateAI = async (req, res) => {
     };
 
     const model = genAI.getGenerativeModel({
-      // Chuyển sang model Pro mạnh mẽ nhất để xử lý logic
+      // Chuyển về dòng Flash để tối ưu tốc độ và tránh lỗi 429/JSON bị ngắt
       model: "gemini-3-flash-preview", 
-      systemInstruction: "Bạn là một giảng viên Toán học cấp cao. Nhiệm vụ của bạn là tạo đề thi với độ chính xác 100% về số lượng và kiến thức.",
+      systemInstruction: "Bạn là chuyên gia soạn thảo đề thi đa năng. Hãy tạo câu hỏi bám sát nội dung, trình bày logic và đảm bảo đủ số lượng yêu cầu.",
       generationConfig: {
         responseMimeType: "application/json",
         responseSchema: schema,
-        maxOutputTokens: 8192, // Dòng Pro hỗ trợ phản hồi cực dài, thoải mái cho 10-20 câu
-        temperature: 0.4, // Giảm temperature để AI làm việc nghiêm túc, tránh sáng tạo quá đà gây thiếu câu
+        maxOutputTokens: 4096, // Đủ cho khoảng 10-15 câu hỏi kèm lời giải
+        temperature: 0.6, // Cân bằng giữa sự sáng tạo và độ chính xác
       },
     });
 
-    // Tính toán tổng số câu để ép AI thực hiện đúng
-    const totalNeeded = parseInt(config.single) + parseInt(config.tf) + parseInt(config.multi);
+    const total = parseInt(config.single) + parseInt(config.tf) + parseInt(config.multi);
 
     const prompt = `
-      YÊU CẦU QUAN TRỌNG: Tạo CHÍNH XÁC ${totalNeeded} câu hỏi. 
-      Phân bổ chi tiết:
-      - ${config.single} câu trắc nghiệm đơn (type: "single")
-      - ${config.tf} câu hỏi đúng/sai (type: "tf")
-      - ${config.multi} câu trả lời ngắn (type: "multi")
+      Nhiệm vụ: Tạo CHÍNH XÁC ${total} câu hỏi cho chủ đề: ${title || "Ôn tập tổng hợp"}.
+      Phân bổ: ${config.single} trắc nghiệm, ${config.tf} đúng/sai, ${config.multi} ngắn.
       
-      Kiến thức mục tiêu: ${content}
+      Nội dung kiến thức: ${content}
       Mức độ: ${level}
       
-      Yêu cầu kỹ thuật:
-      - Sử dụng LaTeX chuẩn cho mọi biểu thức toán học.
-      - Mỗi câu phải có phần giải thích (explanation) logic và sư phạm.
-      - Nếu nội dung cung cấp không đủ, hãy mở rộng sang các dạng bài tập liên quan trực tiếp để đạt đủ ${totalNeeded} câu.
+      Yêu cầu:
+      - Nếu có công thức, hãy dùng LaTeX chuẩn (ví dụ: $E=mc^2$).
+      - Nếu là môn xã hội, hãy đặt câu hỏi mang tính phân tích cao.
+      - Lời giải (explanation) phải rõ ràng, ngắn gọn nhưng đầy đủ ý.
+      - Phải trả về đủ ${total} câu, không được thiếu.
     `;
 
     const result = await model.generateContent(prompt);
-    const jsonData = JSON.parse(result.response.text());
-
-    res.json({ success: true, data: jsonData });
+    
+    // Kiểm tra tính toàn vẹn của JSON trước khi Parse
+    const text = result.response.text();
+    try {
+        const jsonData = JSON.parse(text);
+        res.json({ success: true, data: jsonData });
+    } catch (parseErr) {
+        console.error("JSON Parse Error:", text);
+        throw new Error("Dữ liệu AI trả về không đúng định dạng. Hãy thử lại.");
+    }
 
   } catch (err) {
-    console.error("❌ GEMINI PRO ERROR:", err);
-    res.status(500).json({ success: false, message: "Lỗi AI Pro: " + err.message });
+    console.error("❌ GEMINI 3 FLASH ERROR:", err);
+    res.status(500).json({ success: false, message: "Lỗi AI Flash: " + err.message });
   }
 };
-
