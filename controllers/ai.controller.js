@@ -23,7 +23,7 @@ export const generateAI = async (req, res) => {
       }
     };
 
-    cconst model = genAI.getGenerativeModel({
+    const model = genAI.getGenerativeModel({
   // Tự động sử dụng Gemini 3 Flash mới nhất
   model: "gemini-flash-latest", 
   generationConfig: {
@@ -67,5 +67,6 @@ export const generateAI = async (req, res) => {
     res.status(500).json({ success: false, message: "Lỗi AI Flash: " + err.message });
   }
 };
+
 
 
