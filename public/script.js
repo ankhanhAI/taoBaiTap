@@ -12,17 +12,18 @@ async function submitForm() {
   const originalHTML = btn.innerHTML;
   
   const data = {
-    title: document.getElementById("title").value || "Bài tập AI",
-    content: document.getElementById("content").value,
+    title: document.getElementById("title").value.trim() || "Bài tập AI",
+    content: document.getElementById("content").value.trim(),
     single: Number(document.getElementById("single").value),
     tf: Number(document.getElementById("tf").value),
     multi: Number(document.getElementById("multi").value),
     level: document.getElementById("level").value
   };
 
-  if (!data.content) return alert("Vui lòng nhập nội dung!");
+  // Sử dụng trim() để chặn các chuỗi chỉ có dấu cách
+  if (!data.content) return alert("Vui lòng nhập nội dung bài học!");
 
-  // Trạng thái Loading
+  // Trạng thái Loading chuyên nghiệp
   btn.disabled = true;
   btn.innerHTML = `<span class="loader"></span> <span class="loading-text">Gemini 3 đang soạn đề...</span>`;
 
@@ -34,13 +35,17 @@ async function submitForm() {
     });
 
     const result = await res.json();
-    if (result.success) {
+    
+    if (result.success && result.data) {
+      // Đảm bảo dữ liệu cũ được dọn sạch trước khi lưu đề mới
+      localStorage.removeItem("aiQuestions");
       localStorage.setItem("aiQuestions", JSON.stringify(result.data));
       window.location.href = "/result";
     } else {
-      throw new Error(result.error);
+      throw new Error(result.error || "Dữ liệu AI không hợp lệ");
     }
   } catch (err) {
+    console.error("Lỗi:", err);
     alert("Lỗi: " + err.message);
     btn.disabled = false;
     btn.innerHTML = originalHTML;
