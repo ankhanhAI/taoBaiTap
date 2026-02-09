@@ -1,0 +1,195 @@
+/* --- 1. NHẬP FONT & THIẾT LẬP CHUNG --- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Prompt:wght@100..900&display=swap');
+
+:root {
+  --font-main: 'Prompt', sans-serif;
+  --font-logo: 'Montserrat', sans-serif;
+  --primary: #2563eb;
+  --bg: #f4f6fb;
+  --card-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-sub: #64748b;
+  --border: #e2e8f0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-main);
+  background: var(--bg);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+/* --- 2. WRAPPER & HEADER --- */
+.wrapper {
+  width: 95%;
+  margin: 20px auto;
+  box-sizing: border-box; /* Đảm bảo không phình to khi thêm padding */
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px 0;
+}
+
+header h2 {
+  font-family: var(--font-logo);
+  font-weight: 800;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  color: #0f172a;
+}
+
+.sub {
+  font-size: 0.95rem;
+  color: var(--text-sub);
+}
+
+/* --- 3. CARD CÂU HỎI & GRID ĐÁP ÁN --- */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Chống tràn nội dung card */
+}
+
+.question-no {
+  font-weight: 800;
+  color: var(--primary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.question-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+  word-wrap: break-word; /* Tự động xuống dòng khi từ quá dài */
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Mặc định 1 cột cho Mobile */
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.option-item input {
+  margin-right: 12px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0; /* Không cho icon bị bóp méo khi chữ dài */
+}
+
+/* --- 4. LỜI GIẢI & NÚT BẤM --- */
+.btn-solve {
+  width: 100%;
+  padding: 12px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 10px;
+  color: var(--text-sub);
+  font-weight: 600;
+  font-family: var(--font-main);
+  cursor: pointer;
+  margin-top: 15px;
+  transition: all 0.3s;
+}
+
+.btn-solve:hover {
+  background: #e2e8f0;
+  color: var(--text-main);
+}
+
+.explanation-card {
+  background: #eff6ff;
+  border-left: 4px solid var(--primary);
+  padding: 20px;
+  margin-top: 15px;
+  border-radius: 0 10px 10px 0;
+  font-size: 0.95rem;
+}
+
+/* --- 5. TOOLBAR (BACK/DOWNLOAD) --- */
+.toolbar {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 40px;
+  padding-bottom: 50px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border-radius: 50px;
+  border: none;
+  font-weight: 600;
+  font-family: var(--font-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  transition: transform 0.2s;
+}
+
+.btn:active { transform: scale(0.95); }
+.btn-back { background: #64748b; }
+.btn-download { background: #16a34a; }
+
+/* ======================================================
+   RESPONSIVE THEO SƠ ĐỒ THIẾT BỊ
+   ====================================================== */
+
+/* MOBILE (Dưới 576px) */
+@media (max-width: 575.98px) {
+  .wrapper { padding: 10px; }
+  .card { padding: 16px; }
+  header h2 { font-size: 1.4rem; }
+  .toolbar { flex-direction: column; }
+  .btn { width: 100%; justify-content: center; }
+}
+
+/* TABLET (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .wrapper { max-width: 720px; }
+  .options-grid { grid-template-columns: 1fr 1fr; } /* Chuyển thành 2 cột */
+}
+
+/* DESKTOP (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .wrapper { max-width: 850px; }
+  .options-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* EXTRA LARGE (Trên 1200px) */
+@media (min-width: 1200px) {
+  .wrapper { max-width: 1000px; }
+  .options-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* --- XỬ LÝ TOÁN HỌC (KATEX FIX) --- */
+.katex-display {
+  overflow-x: auto; /* Cuộn ngang nếu công thức quá dài trên mobile */
+  padding: 10px 0;
+  max-width: 100%;
+}
