@@ -22,15 +22,19 @@ export const generateAI = async (req, res) => {
       },
     });
 
-    const prompt = `Bạn là giáo viên .Tạo mảng JSON chứa đúng ${total} câu hỏi về: ${content}.
+    const prompt = `Bạn là chuyên gia giáo dục đa năng. Hãy tạo một mảng JSON chứa CHÍNH XÁC ${total} câu hỏi về nội dung: ${content}.
       Độ khó: ${level}.
-      Yêu cầu số lượng:
-      - ${single} câu 'multi' (trắc nghiệm 4 đáp án)
-      - ${tf} câu 'tf' (đúng/sai)
-      - ${multi} câu 'single' (trả lời ngắn)
-      - Sử dụng LaTeX trong $.
-      - Explanation: giải thích thật ngắn gọn dưới 1 dòng.
-      BẮT BUỘC TRẢ VỀ ĐỦ ${total} CÂU.`;
+      
+      Yêu cầu số lượng và định dạng (BẮT BUỘC):
+      - ${single} câu type "single": Trắc nghiệm 4 lựa chọn (phải có mảng "options").
+      - ${tf} câu type "tf": Câu hỏi Đúng/Sai.
+      - ${multi} câu type "multi": Câu hỏi trả lời ngắn (không cần "options").
+      
+      Quy tắc kỹ thuật:
+      1. LaTeX: Sử dụng $ cho công thức (Ví dụ: $x^2 + y^2 = R^2$).
+      2. JSON Escaping: Dùng dấu xuyệt ngược kép (\\) cho các ký tự đặc biệt của LaTeX (Ví dụ: \\frac, \\sqrt).
+      3. Giải thích (explanation): Viết cực ngắn, tối đa 1 dòng.
+      4. Tuyệt đối không được thiếu câu nào. Phải trả về đủ ${total} phần tử trong mảng JSON.`;
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
@@ -43,4 +47,5 @@ export const generateAI = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
+
 
