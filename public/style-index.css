@@ -1,12 +1,13 @@
 /* --- 1. NHẬP FONT TỪ GOOGLE --- */
-@import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Prompt:wght@100..900&display=swap');
 
 /* --- 2. THIẾT LẬP CHUNG --- */
 :root {
-  --font-main: 'Prompt', sans-serif; /* Font hiện đại cho tiêu đề và nội dung */
+  --font-main: 'Prompt', sans-serif;
   --font-logo: 'Montserrat', sans-serif;
   --primary-dark: #0f172a;
   --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --border-color: #e2e8f0;
 }
 
 body {
@@ -34,7 +35,7 @@ body {
   font-weight: 900;
   font-size: 4rem;
   letter-spacing: -2px;
-  margin-bottom: 10px;
+  margin: 0 0 10px 0;
   color: var(--primary-dark);
 }
 
@@ -53,18 +54,13 @@ body {
   font-family: var(--font-main);
   font-weight: 600;
   font-size: 1.1rem;
-  border-radius: 50px; /* Nút bo tròn hiện đại */
+  border-radius: 50px;
   cursor: pointer;
   box-shadow: 0 10px 20px rgba(0,0,0,0.1);
   transition: all 0.3s ease;
 }
 
-.btn-main:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 25px rgba(0,0,0,0.15);
-}
-
-/* --- 4. OVERLAY & FORM WRAPPER --- */
+/* --- 4. OVERLAY & FORM (CĂN CHỈNH TRUNG TÂM) --- */
 .overlay {
   position: fixed;
   inset: 0;
@@ -74,46 +70,152 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  padding: 20px;
 }
 
 .wrapper {
   background: #ffffff;
-  width: 95%;
+  width: 100%;
   max-width: 480px;
-  padding: 35px;
+  padding: 30px;
   border-radius: 24px;
   box-sizing: border-box;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 .wrapper h2 {
   font-family: var(--font-logo);
   font-weight: 800;
-  margin-top: 0;
+  margin: 0 0 20px 0;
+  text-align: center;
 }
 
-/* --- 5. RESPONSIVE (THEO ẢNH MẪU CỦA BẠN) --- */
+/* --- 5. FIXED CARD UI (SỬA LỖI TRÀN CHỮ & BỐ CỤC) --- */
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  gap: 10px; /* Tạo khoảng cách giữa chữ và nút bấm */
+}
+
+.card strong {
+  font-size: 0.95rem;
+  color: #334155;
+  white-space: nowrap; /* Giữ tiêu đề không bị nhảy dòng */
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.counter button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.counter button:hover { background: #f1f5f9; }
+
+.counter input {
+  width: 40px;
+  height: 32px;
+  text-align: center;
+  border: none;
+  border-left: 1px solid #cbd5e1;
+  border-right: 1px solid #cbd5e1;
+  font-family: var(--font-main);
+  font-weight: 600;
+}
+
+/* --- 6. CÁC PHẦN TỬ FORM KHÁC --- */
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 15px 0 5px 0;
+  color: #475569;
+}
+
+input[type="text"], textarea, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-family: var(--font-main);
+  box-sizing: border-box;
+}
+
+textarea { height: 80px; resize: none; }
+
+.submit {
+  width: 100%;
+  padding: 15px;
+  background: var(--primary-dark);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.close {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+/* ======================================================
+   RESPONSIVE THEO MẪU
+   ====================================================== */
 
 /* Mobile (Dưới 576px) */
 @media (max-width: 575.98px) {
   .home h1 { font-size: 2.5rem; }
-  .wrapper { padding: 25px; width: 98%; }
-  .card { flex-direction: column; gap: 15px; text-align: center; }
+  .wrapper { padding: 20px; }
+  .card { 
+    flex-direction: row; /* Giữ hàng ngang nhưng co giãn linh hoạt */
+    padding: 10px; 
+  }
+  .card strong { font-size: 0.85rem; }
 }
 
-/* Tablet */
+/* Tablet (768px - 991px) */
 @media (min-width: 768px) and (max-width: 991.98px) {
   .wrapper { max-width: 440px; }
 }
 
-/* --- TRẠNG THÁI LOADING --- */
+/* Extra Large (Trên 1200px) */
+@media (min-width: 1200px) {
+  .wrapper { max-width: 500px; }
+}
+
+/* Loading Spinner */
 .loader {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   display: inline-block;
-  vertical-align: middle;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
