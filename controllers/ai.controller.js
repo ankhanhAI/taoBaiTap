@@ -6,8 +6,9 @@ export const generateAI = async (req, res) => {
     if (!apiKey) return res.status(500).json({ error: "Thiếu API Key." });
 
     const genAI = new GoogleGenerativeAI(apiKey);
+    const { content, config, level } = req.body; 
 
-    // Định nghĩa Schema chặt chẽ
+    // Schema vẫn giữ nguyên để đảm bảo tính đồng bộ với giao diện
     const schema = {
       type: SchemaType.ARRAY,
       items: {
@@ -19,34 +20,48 @@ export const generateAI = async (req, res) => {
           answer: { type: SchemaType.STRING },
           explanation: { type: SchemaType.STRING }
         },
-        required: ["type", "question", "answer"]
+        required: ["type", "question", "answer", "explanation"]
       }
     };
 
-    const { content, single, tf, multi, level } = req.body;
-
     const model = genAI.getGenerativeModel({
-      model: "gemini-3-flash-preview",
+      // Chuyển sang model Pro mạnh mẽ nhất để xử lý logic
+      model: "gemini-3-pro-preview", 
+      systemInstruction: "Bạn là một giảng viên Toán học cấp cao. Nhiệm vụ của bạn là tạo đề thi với độ chính xác 100% về số lượng và kiến thức.",
       generationConfig: {
         responseMimeType: "application/json",
         responseSchema: schema,
+        maxOutputTokens: 8192, // Dòng Pro hỗ trợ phản hồi cực dài, thoải mái cho 10-20 câu
+        temperature: 0.4, // Giảm temperature để AI làm việc nghiêm túc, tránh sáng tạo quá đà gây thiếu câu
       },
     });
 
-    const prompt = `Tạo câu hỏi Toán THPT: 
-      Nội dung: ${content}. Độ khó: ${level}. 
-      Số lượng: ${single} câu đơn, ${tf} câu đúng/sai, ${multi} câu ngắn. 
-      Sử dụng LaTeX cho công thức.`;
+    // Tính toán tổng số câu để ép AI thực hiện đúng
+    const totalNeeded = parseInt(config.single) + parseInt(config.tf) + parseInt(config.multi);
+
+    const prompt = `
+      YÊU CẦU QUAN TRỌNG: Tạo CHÍNH XÁC ${totalNeeded} câu hỏi. 
+      Phân bổ chi tiết:
+      - ${config.single} câu trắc nghiệm đơn (type: "single")
+      - ${config.tf} câu hỏi đúng/sai (type: "tf")
+      - ${config.multi} câu trả lời ngắn (type: "multi")
+      
+      Kiến thức mục tiêu: ${content}
+      Mức độ: ${level}
+      
+      Yêu cầu kỹ thuật:
+      - Sử dụng LaTeX chuẩn cho mọi biểu thức toán học.
+      - Mỗi câu phải có phần giải thích (explanation) logic và sư phạm.
+      - Nếu nội dung cung cấp không đủ, hãy mở rộng sang các dạng bài tập liên quan trực tiếp để đạt đủ ${totalNeeded} câu.
+    `;
 
     const result = await model.generateContent(prompt);
-    
-    // Gemini 3 trả về JSON cực sạch, không cần xử lý chuỗi phức tạp
     const jsonData = JSON.parse(result.response.text());
 
     res.json({ success: true, data: jsonData });
 
   } catch (err) {
-    console.error("❌ GEMINI 3 ERROR:", err);
-    res.status(500).json({ error: "Lỗi AI", detail: err.message });
+    console.error("❌ GEMINI PRO ERROR:", err);
+    res.status(500).json({ success: false, message: "Lỗi AI Pro: " + err.message });
   }
 };
