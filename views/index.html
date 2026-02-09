@@ -2,66 +2,70 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Q-GEN AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Q-GEN AI - Tạo Bài Tập Smart</title>
   <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Loading Spinner */
+    .loader {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .loading-text { animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+    button:disabled { background-color: #94a3b8 !important; cursor: not-allowed; }
+  </style>
 </head>
 <body>
 
-  <!-- TRANG CHÍNH -->
   <div class="home" id="home">
     <h1>Q-GEN AI</h1>
     <p>Người bạn ôn tập số của học sinh THPT</p>
-    <button onclick="openForm()">+ Tạo Bài Tập Mới</button>
+    <button class="btn-main" onclick="openForm()">+ Tạo Bài Tập Mới</button>
   </div>
 
-  <!-- FORM -->
-  <div class="overlay" id="form">
+  <div class="overlay" id="form" style="display:none;">
     <div class="wrapper">
-      <h2>Tạo Bài Tập Mới</h2>
+      <h2>Thiết Lập Bài Tập</h2>
+      <label>Tên bài tập</label>
+      <input type="text" id="title" placeholder="Ví dụ: Đạo hàm & Tích phân">
+      
+      <label>Nội dung kiến thức</label>
+      <textarea id="content" placeholder="Dán nội dung bài học hoặc chủ đề vào đây..."></textarea>
 
-      <label>Tên bài tập *</label>
-      <input type="text" id="title" placeholder="Ví dụ: Ôn tập Toán 12">
-
-      <label>Nội dung bài học *</label>
-      <textarea id="content" placeholder="Ví dụ: Hàm số mũ - logarit"></textarea>
-
-      <h3>Loại câu hỏi</h3>
-
-      <!-- TRẮC NGHIỆM 1 -->
       <div class="card">
-        <div>
-          <strong>Trắc nghiệm 1 lựa chọn</strong>
-          <p>Chọn 1 đáp án đúng</p>
-        </div>
+        <strong>Trắc nghiệm 1 lựa chọn</strong>
         <div class="counter">
           <button onclick="change('single', -1)">−</button>
-          <input id="single" type="number" value="5" min="0">
+          <input id="single" type="number" value="5">
           <button onclick="change('single', 1)">+</button>
         </div>
       </div>
 
-      <!-- ĐÚNG / SAI -->
       <div class="card">
-        <div>
-          <strong>Đúng / Sai</strong>
-          <p>Câu hỏi đúng hoặc sai</p>
-        </div>
+        <strong>Đúng / Sai</strong>
         <div class="counter">
           <button onclick="change('tf', -1)">−</button>
-          <input id="tf" type="number" value="3" min="0">
+          <input id="tf" type="number" value="2">
           <button onclick="change('tf', 1)">+</button>
         </div>
       </div>
 
-      <!-- NHIỀU LỰA CHỌN -->
       <div class="card">
-        <div>
-          <strong>Nhiều lựa chọn</strong>
-          <p>Chọn nhiều đáp án đúng</p>
-        </div>
+        <strong>Trả lời ngắn</strong>
         <div class="counter">
           <button onclick="change('multi', -1)">−</button>
-          <input id="multi" type="number" value="2" min="0">
+          <input id="multi" type="number" value="3">
           <button onclick="change('multi', 1)">+</button>
         </div>
       </div>
@@ -69,14 +73,13 @@
       <label>Độ khó</label>
       <select id="level">
         <option>Dễ</option>
-        <option>Trung bình</option>
+        <option selected>Trung bình</option>
         <option>Khó</option>
       </select>
 
-      <button class="submit" onclick="submitForm()">
+      <button id="submitBtn" class="submit" onclick="submitForm()">
         🚀 Tạo bài tập bằng AI
       </button>
-
       <button class="close" onclick="closeForm()">✖ Đóng</button>
     </div>
   </div>
@@ -84,4 +87,3 @@
   <script src="/script.js"></script>
 </body>
 </html>
-
