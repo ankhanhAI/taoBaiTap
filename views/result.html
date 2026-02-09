@@ -3,83 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kết quả bài tập - Q-GEN AI</title>
+  <title>Kết quả bài tập - ankhanh-AI</title>
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-
-  <style>
-    :root {
-      --primary: #2563eb;
-      --success: #16a34a;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-    }
-
-    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #1e293b; }
-    .wrapper { max-width: 850px; margin: 0 auto; }
-    
-    header { margin-bottom: 30px; text-align: center; }
-    h2 { color: #0f172a; margin-bottom: 5px; }
-    .sub { color: #64748b; font-size: 0.9em; }
-
-    .card { 
-      background: var(--card-bg); 
-      border-radius: 12px; 
-      padding: 24px; 
-      margin-bottom: 20px; 
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      border: 1px solid #e2e8f0;
-    }
-
-    .question-no { font-weight: 700; color: var(--primary); margin-bottom: 12px; display: block; }
-    .question-text { font-size: 1.1em; margin-bottom: 18px; line-height: 1.5; }
-
-    .option-item { 
-      display: flex; align-items: center; 
-      padding: 10px; border: 1px solid #f1f5f9; 
-      border-radius: 6px; margin-bottom: 8px; 
-      transition: background 0.2s;
-    }
-    input[type="radio"], input[type="checkbox"] { margin-right: 12px; width: 18px; height: 18px; }
-
-    /* Nút Giải & Lời Giải */
-    .btn-solve {
-      background: #f1f5f9; color: #475569; border: none;
-      padding: 8px 16px; border-radius: 6px; cursor: pointer;
-      font-weight: 600; font-size: 0.85em; margin-top: 15px;
-      transition: all 0.2s;
-    }
-    .btn-solve:hover { background: #e2e8f0; color: #0f172a; }
-
-    .explanation-card {
-      display: none; /* Mặc định ẩn */
-      margin-top: 15px; padding: 20px;
-      background: #f0f9ff; border-radius: 8px;
-      border-left: 4px solid var(--primary);
-      animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-
-    .ans-tag { color: var(--success); font-weight: 700; }
-
-    /* Thanh công cụ dưới cùng */
-    .toolbar { 
-      position: sticky; bottom: 20px; 
-      display: flex; gap: 12px; justify-content: center;
-      margin-top: 40px;
-    }
-    .btn { 
-      padding: 12px 24px; border-radius: 8px; border: none; 
-      font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    }
-    .btn-back { background: #64748b; color: white; }
-    .btn-download { background: var(--success); color: white; }
-  </style>
+  
+  <link rel="stylesheet" href="/style-result.css">
 </head>
 <body>
-
   <div class="wrapper">
     <header>
       <h2 id="title">Đang tải câu hỏi...</h2>
@@ -94,117 +26,6 @@
     </div>
   </div>
 
-  <script>
-    // 1. Lấy dữ liệu
-    const raw = localStorage.getItem("aiQuestions");
-    let questions = [];
-
-    try {
-      questions = JSON.parse(raw);
-      if (!Array.isArray(questions)) throw new Error();
-    } catch (e) {
-      alert("❌ Không tìm thấy dữ liệu. Vui lòng tạo lại bài tập.");
-      window.location.href = "/";
-    }
-
-    // 2. Hiển thị Header
-    document.getElementById("title").innerText = "📘 Bài tập Toán Gemini 3 Flash";
-    document.getElementById("info").innerText = `Tổng số: ${questions.length} câu hỏi • Đã kèm lời giải chi tiết`;
-
-    // 3. Hàm Render chính
-    const container = document.getElementById("question-list");
-
-    function renderUI() {
-      let html = "";
-      questions.forEach((q, i) => {
-        const solveId = `solve-${i}`;
-        
-        html += `
-          <div class="card">
-            <span class="question-no">CÂU HỎI ${i + 1}</span>
-            <div class="question-text">${q.question}</div>
-            
-            <div class="options">
-              ${renderOptions(q)}
-            </div>
-
-            <button class="btn-solve" onclick="toggleSolve('${solveId}')">🔍 Xem lời giải & Đáp án</button>
-
-            <div id="${solveId}" class="explanation-card">
-              <p><span class="ans-tag">✅ ĐÁP ÁN:</span> <strong>${q.answer}</strong></p>
-              <div style="height:1px; background:#bae6fd; margin:10px 0;"></div>
-              <p><strong>📝 HƯỚNG DẪN GIẢI:</strong></p>
-              <div class="exp-text">${q.explanation || "Không có lời giải chi tiết cho câu này."}</div>
-            </div>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-
-      // Kích hoạt KaTeX cho toàn bộ nội dung
-      setTimeout(() => {
-        if (window.renderMathInElement) {
-          renderMathInElement(document.body, {
-            delimiters: [
-              {left: '$$', right: '$$', display: true},
-              {left: '$', right: '$', display: false},
-              {left: '\\(', right: '\\)', display: false},
-              {left: '\\[', right: '\\]', display: true}
-            ],
-            throwOnError: false
-          });
-        }
-      }, 100);
-    }
-
-    function renderOptions(q) {
-      if (q.type === "tf") {
-        return `
-          <div class="option-item"><input type="radio" disabled> Đúng</div>
-          <div class="option-item"><input type="radio" disabled> Sai</div>
-        `;
-      }
-      if (q.options && Array.isArray(q.options)) {
-        return q.options.map(opt => `
-          <div class="option-item">
-            <input type="${q.type === 'multi' ? 'checkbox' : 'radio'}" disabled>
-            <span>${opt}</span>
-          </div>
-        `).join('');
-      }
-      return `<p style="color: #94a3b8; font-style: italic;">(Câu hỏi tự luận/trả lời ngắn)</p>`;
-    }
-
-    // 4. Các hàm điều khiển
-    function toggleSolve(id) {
-      const el = document.getElementById(id);
-      el.style.display = (el.style.display === "block") ? "none" : "block";
-    }
-
-    function downloadAll() {
-      let text = `BÀI TẬP TOÁN - Q-GEN AI (Gemini 3 Flash)\n`;
-      text += `Ngày tạo: ${new Date().toLocaleDateString('vi-VN')}\n`;
-      text += `==========================================\n\n`;
-
-      questions.forEach((q, i) => {
-        text += `Câu ${i+1}: ${q.question.replace(/\$/g, '')}\n`;
-        if(q.options) text += `Lựa chọn: ${q.options.join(' | ')}\n`;
-        text += `👉 ĐÁP ÁN: ${q.answer}\n`;
-        text += `📝 LỜI GIẢI: ${q.explanation ? q.explanation.replace(/\$/g, '') : 'N/A'}\n`;
-        text += `------------------------------------------\n\n`;
-      });
-
-      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "De_Bai_Va_Loi_Giai.txt";
-      link.click();
-    }
-
-    function goBack() { window.location.href = "/"; }
-
-    // Chạy render
-    window.onload = renderUI;
-  </script>
+  <script src="/result.js"></script>
 </body>
 </html>
