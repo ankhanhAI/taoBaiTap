@@ -186,7 +186,7 @@ models/gemini-1.0-pro not supported
  Model nên dùng:
 
 ```txt
-models/gemini-1.5-flash
+models/gemini-3-flash-preview
 ```
 
  **Luôn đọc doc chính thức**:
@@ -228,3 +228,4 @@ console.log(result);
   * Lưu DB
   * Login
   * Chấm điểm
+
