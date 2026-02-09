@@ -1,22 +1,18 @@
-function openForm() {
-  document.getElementById("form").style.display = "flex";
-}
+function openForm() { document.getElementById("form").style.display = "flex"; }
+function closeForm() { document.getElementById("form").style.display = "none"; }
 
-function closeForm() {
-  document.getElementById("form").style.display = "none";
-}
-
-function change(id, value) {
+function change(id, val) {
   const el = document.getElementById(id);
-  let num = parseInt(el.value) || 0;
-  num += value;
-  if (num < 0) num = 0;
-  el.value = num;
+  let n = (parseInt(el.value) || 0) + val;
+  el.value = n < 0 ? 0 : n;
 }
 
 async function submitForm() {
+  const btn = document.getElementById("submitBtn");
+  const originalHTML = btn.innerHTML;
+  
   const data = {
-    title: document.getElementById("title").value,
+    title: document.getElementById("title").value || "Bài tập AI",
     content: document.getElementById("content").value,
     single: Number(document.getElementById("single").value),
     tf: Number(document.getElementById("tf").value),
@@ -24,7 +20,11 @@ async function submitForm() {
     level: document.getElementById("level").value
   };
 
-  alert("🤖 AI đang tạo câu hỏi, vui lòng đợi...");
+  if (!data.content) return alert("Vui lòng nhập nội dung!");
+
+  // Trạng thái Loading
+  btn.disabled = true;
+  btn.innerHTML = `<span class="loader"></span> <span class="loading-text">Gemini 3 đang soạn đề...</span>`;
 
   try {
     const res = await fetch("/api/ai/generate", {
@@ -34,26 +34,15 @@ async function submitForm() {
     });
 
     const result = await res.json();
-    console.log("✅ AI RESPONSE:", result);
-
-    if (!result || !Array.isArray(result.data)) {
-      alert("❌ AI không trả dữ liệu hợp lệ");
-      return;
+    if (result.success) {
+      localStorage.setItem("aiQuestions", JSON.stringify(result.data));
+      window.location.href = "/result";
+    } else {
+      throw new Error(result.error);
     }
-
-    localStorage.setItem(
-      "aiQuestions",
-      JSON.stringify(result.data)
-    );
-
-    window.location.href = "/result";
-
   } catch (err) {
-    console.error(err);
-    alert("❌ Lỗi khi gọi AI");
+    alert("Lỗi: " + err.message);
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
   }
 }
-
-
-
-
