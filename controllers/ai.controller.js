@@ -31,7 +31,7 @@ export const generateAI = async (req, res) => {
         responseMimeType: "application/json",
         responseSchema: schema,
         maxOutputTokens: 4096, // Đủ cho khoảng 10-15 câu hỏi kèm lời giải
-        temperature: 0.6, // Cân bằng giữa sự sáng tạo và độ chính xác
+        temperature: 0.3, // Cân bằng giữa sự sáng tạo và độ chính xác
       },
     });
 
@@ -68,3 +68,4 @@ export const generateAI = async (req, res) => {
     res.status(500).json({ success: false, message: "Lỗi AI Flash: " + err.message });
   }
 };
+
