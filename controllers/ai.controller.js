@@ -23,17 +23,16 @@ export const generateAI = async (req, res) => {
       }
     };
 
-    const model = genAI.getGenerativeModel({
-      // Chuyển về dòng Flash để tối ưu tốc độ và tránh lỗi 429/JSON bị ngắt
-      model: "gemini-3-flash-preview", 
-      systemInstruction: "Bạn là chuyên gia soạn thảo đề thi đa năng. Hãy tạo câu hỏi bám sát nội dung, trình bày logic và đảm bảo đủ số lượng yêu cầu.",
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: schema,
-        maxOutputTokens: 4096, // Đủ cho khoảng 10-15 câu hỏi kèm lời giải
-        temperature: 0.3, // Cân bằng giữa sự sáng tạo và độ chính xác
-      },
-    });
+    cconst model = genAI.getGenerativeModel({
+  // Tự động sử dụng Gemini 3 Flash mới nhất
+  model: "gemini-flash-latest", 
+  generationConfig: {
+    responseMimeType: "application/json",
+    responseSchema: schema,
+    // Với dòng 3 Flash, bạn có thể tự tin đặt 4096 tokens để tránh lỗi ngắt JSON
+    maxOutputTokens: 4096, 
+  },
+});
 
     const total = parseInt(config.single) + parseInt(config.tf) + parseInt(config.multi);
 
@@ -68,4 +67,5 @@ export const generateAI = async (req, res) => {
     res.status(500).json({ success: false, message: "Lỗi AI Flash: " + err.message });
   }
 };
+
 
