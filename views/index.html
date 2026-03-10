@@ -10,7 +10,7 @@
 
   <div class="home" id="home">
     <h1>AnKhanh-AI</h1>
-    <p>Người bạn ôn tập số của học sinh THPT</p>
+    <p>Người bạn ôn tập số của học sinh</p>
     <p>GV thực hiện: Võ Thị Anh Phương</p>
     <button class="btn-main" onclick="openForm()">+ Tạo Bài Tập Mới</button>
   </div>
@@ -20,13 +20,13 @@
       <h2>Thiết Lập Bài Tập</h2>
       
       <label for="title">Tên bài tập</label>
-      <input type="text" id="title" placeholder="Ví dụ: Đạo hàm & Tích phân">
+      <input type="text" id="title" placeholder="Ví dụ: Vật lí hạt nhân">
       
       <label for="content">Nội dung kiến thức</label>
       <textarea id="content" placeholder="Dán nội dung bài học hoặc chủ đề vào đây..."></textarea>
 
       <div class="card">
-        <strong>Trắc nghiệm 1 lựa chọn</strong>
+        <strong>Trắc nghiệm nhiều lựa chọn</strong>
         <div class="counter">
           <button onclick="change('single', -1)">−</button>
           <input id="single" type="number" value="5">
@@ -44,7 +44,7 @@
       </div>
 
       <div class="card">
-        <strong>Trả lời ngắn</strong>
+        <strong>Tự luận/Trả lời ngắn</strong>
         <div class="counter">
           <button onclick="change('multi', -1)">−</button>
           <input id="multi" type="number" value="3">
@@ -69,6 +69,7 @@
   <script src="/script-index.js"></script>
 </body>
 </html>
+
 
 
 
